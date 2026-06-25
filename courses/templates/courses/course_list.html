@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kurslar Ro'yxati</title>
+</head>
+<body>
+    <h2>Mavjud Kurslar Ro'yxati</h2>
+
+    {% if perms.courses.add_course %}
+        <p>
+            <a href="{% url 'course_create' %}">
+                + Yangi kurs qo'shish
+            </a>
+        </p>
+    {% endif %}
+
+    <hr>
+
+    {% if courses %}
+        <ul>
+            {% for course in courses %}
+                <li>
+                    <h3>{{ course.title }}</h3>
+                    <p>{{ course.description }}</p>
+                    <small>Yaratuvchi: {{ course.created_by.email }} | Sana: {{ course.created_at|date:"d.m.Y H:i" }}</small>
+                </li>
+                <hr style="border: 0.5px dashed #ccc;">
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Hozircha hech qanday kurs yaratilmagan.</p>
+    {% endif %}
+
+    <br>
+    <p><a href="{% url 'profile' %}">Profilga qaytish</a></p>
+</body>
+</html>

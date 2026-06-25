@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mening Saytim{% endblock %}</title>
+    <style>
+        nav { background: #333; padding: 15px; }
+        nav a { color: white; margin-right: 15px; text-decoration: none; }
+        nav a:hover { text-decoration: underline; }
+        .container { padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Home</a>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'course_list' %}">Courses</a>
+            
+            {% if perms.courses.add_course %}
+                <a href="{% url 'course_create' %}" style="color: #5cb85c;">Create Course</a>
+            {% endif %}
+
+            <a href="{% url 'profile' %}">Profile</a>
+            
+            <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" style="background:none; border:none; color:white; cursor:pointer; font-size:16px;">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </nav>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+{% extends 'base.html' %} 
+
+{% block title %}Ro'yxatdan o'tish{% endblock %}
+
+{% block content %}
+<div style="max-width: 450px; margin: 60px auto; padding: 30px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    
+    <h2 style="text-align: center; color: #333; margin-bottom: 25px; font-weight: 600;">Yangi hisob yaratish</h2>
+
+    <form method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        <div class="form-group" style="color: #444; line-height: 1.6;">
+            {{ form.as_p }} 
+        </div>
+        
+        <button type="submit" style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s ease-in-out; box-shadow: 0 2px 5px rgba(0,123,255,0.3);">
+            Ro'yxatdan o'tish
+        </button>
+    </form>
+
+    <div style="margin-top: 25px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+        <p style="color: #666; font-size: 14px; margin: 0;">
+            Akkauntingiz bormi? 
+            <a href="{% url 'login' %}" style="color: #007bff; text-decoration: none; font-weight: 600; margin-left: 5px;">Tizimga kiring</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

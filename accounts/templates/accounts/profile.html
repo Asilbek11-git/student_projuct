@@ -1,0 +1,67 @@
+{% extends 'base.html' %} 
+
+{% block title %}Profil sahifasi{% endblock %}
+
+{% block content %}
+<div style="max-width: 550px; margin: 50px auto; padding: 40px; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 25px rgba(0,0,0,0.08); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <div style="width: 90px; height: 90px; background: linear-gradient(135deg, #007bff, #0056b3); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 36px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,123,255,0.3);">
+            {{ user.email|slice:":1"|upper }}
+        </div>
+        <h2 style="color: #212529; margin: 0; font-weight: 700; font-size: 26px;">Xush kelibsiz!</h2>
+        <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 15px;">Shaxsiy kabinet ma'lumotlari</p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; border-radius: 12px; padding: 24px; margin-bottom: 25px; border: 1px solid #eef0f2;">
+        
+        {% if user.first_name or user.last_name %}
+        <div style="margin-bottom: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #edf2f7; padding-bottom: 10px;">
+            <span style="color: #718096; font-weight: 500;">Foydalanuvchi:</span>
+            <span style="color: #1a202c; font-weight: 600;">{{ user.first_name }} {{ user.last_name }}</span>
+        </div>
+        {% endif %}
+
+        <div style="margin-bottom: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #edf2f7; padding-bottom: 10px;">
+            <span style="color: #718096; font-weight: 500;">Email manzili:</span>
+            <span style="color: #1a202c; font-weight: 600;">{{ user.email }}</span>
+        </div>
+
+        <div style="margin-bottom: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #edf2f7; padding-bottom: 10px; align-items: center;">
+            <span style="color: #718096; font-weight: 500;">Tizimdagi rolingiz:</span>
+            <span style="background-color: #ebf8ff; color: #2b6cb0; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                {{ user.role }}
+            </span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; padding-top: 4px;">
+            <span style="color: #718096; font-weight: 500;">A'zo bo'lingan sana:</span>
+            <span style="color: #1a202c; font-weight: 600;">{{ user.date_joined|date:"d-F, Y" }}</span>
+        </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+        
+        {% if user.role == 'student' %}
+            <a href="{% url 'course_list' %}" style="display: block; text-align: center; padding: 12px; background-color: #007bff; color: white; border-radius: 8px; font-weight: 600; text-decoration: none; transition: background 0.2s;">
+                📚 Mening kurslarimga o'tish
+            </a>
+        {% elif user.role == 'teacher' %}
+            <a href="{% url 'course_create' %}" style="display: block; text-align: center; padding: 12px; background-color: #17a2b8; color: white; border-radius: 8px; font-weight: 600; text-decoration: none; transition: background 0.2s;">
+                ➕ Yangi kurs qo'shish
+            </a>
+        {% endif %}
+
+        <a href="#" style="display: block; text-align: center; padding: 11px; background-color: transparent; color: #4a5568; border: 1px solid #cbd5e0; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.2s;">
+            ⚙️ Profilni tahrirlash
+        </a>
+    </div>
+
+    <form action="{% url 'logout' %}" method="POST" style="margin: 0; border-top: 1px solid #edf2f7; padding-top: 20px;">
+         {% csrf_token %}
+        <button type="submit" style="width: 100%; padding: 12px; background-color: #fff5f5; color: #e53e3e; border: 1px solid #fed7d7; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+             Tizimdan chiqish
+        </button>
+    </form>
+</div>
+{% endblock %}
