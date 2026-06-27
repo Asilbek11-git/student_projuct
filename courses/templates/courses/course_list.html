@@ -1,38 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Kurslar Ro'yxati</title>
-</head>
-<body>
-    <h2>Mavjud Kurslar Ro'yxati</h2>
+{% extends 'base.html' %} 
 
-    {% if perms.courses.add_course %}
-        <p>
-            <a href="{% url 'course_create' %}">
+{% block title %}Kurslar Ro'yxati{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 40px auto; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2 style="color: #212529; margin: 0; font-weight: 700;">📚 Mavjud Kurslar Ro'yxati</h2>
+        
+        {% if perms.courses.add_course %}
+            <a href="{% url 'course_create' %}" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 0 2px 5px rgba(40,167,69,0.2);">
                 + Yangi kurs qo'shish
             </a>
-        </p>
-    {% endif %}
+        {% endif %}
+    </div>
 
-    <hr>
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #eef0f2;">
+        <form method="GET" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">
+            
+            <div style="flex: 1; min-width: 250px;">
+                <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Kurs nomi yoki tavsifidan qidirish..." 
+                       style="width: 100%; padding: 11px 15px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+            </div>
 
-    {% if courses %}
-        <ul>
-            {% for course in courses %}
-                <li>
-                    <h3>{{ course.title }}</h3>
-                    <p>{{ course.description }}</p>
-                    <small>Yaratuvchi: {{ course.created_by.email }} | Sana: {{ course.created_at|date:"d.m.Y H:i" }}</small>
-                </li>
-                <hr style="border: 0.5px dashed #ccc;">
+            <div style="min-width: 180px;">
+                <select name="category" style="width: 100%; padding: 11px 15px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; background-color: white;">
+                    <option value="">Barcha kategoriyalar</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if selected_category|slugify == cat.id|slugify %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" style="padding: 11px 25px; background-color: #007bff; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                🔍 Izlash
+            </button>
+
+            {% if search_query or selected_category %}
+                <a href="{% url 'course_list' %}" style="padding: 11px 15px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-size: 14px;">
+                    Tozalash
+                </a>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if page_obj %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px;">
+            {% for course in page_obj %}
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s;">
+                    <div>
+                        <h3 style="color: #1a202c; margin: 0 0 12px 0; font-size: 20px; font-weight: 600;">{{ course.title }}</h3>
+                        <p style="color: #4a5568; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">{{ course.description|truncatewords:20 }}</p>
+                    </div>
+                    <div style="border-top: 1px solid #edf2f7; padding-top: 12px; margin-top: auto;">
+                        <small style="color: #718096; display: block; margin-bottom: 4px;">👤 {{ course.created_by.email }}</small>
+                        <small style="color: #a0aec0; display: block;">📅 {{ course.created_at|date:"d.m.Y H:i" }}</small>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 30px;">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}" 
+                   style="padding: 8px 12px; border: 1px solid #cbd5e0; border-radius: 6px; text-decoration: none; color: #4a5568;">&laquo; Birinchi</a>
+                
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}" 
+                   style="padding: 8px 12px; border: 1px solid #cbd5e0; border-radius: 6px; text-decoration: none; color: #4a5568;">Orqaga</a>
+            {% endif %}
+
+            <span style="padding: 8px 15px; background-color: #007bff; color: white; border-radius: 6px; font-weight: 600;">
+                Sahifa {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}" 
+                   style="padding: 8px 12px; border: 1px solid #cbd5e0; border-radius: 6px; text-decoration: none; color: #4a5568;">Keyingi</a>
+                
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}" 
+                   style="padding: 8px 12px; border: 1px solid #cbd5e0; border-radius: 6px; text-decoration: none; color: #4a5568;">Oxirgi &raquo;</a>
+            {% endif %}
+        </div>
+
     {% else %}
-        <p>Hozircha hech qanday kurs yaratilmagan.</p>
+        <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 12px; color: #718096;">
+            <p style="font-size: 16px; margin: 0;">Hech qanday kurs topilmadi yoki hali yaratilmagan.</p>
+        </div>
     {% endif %}
 
-    <br>
-    <p><a href="{% url 'profile' %}">Profilga qaytish</a></p>
-</body>
-</html>
+    <div style="margin-top: 40px; text-align: center; border-top: 1px solid #edf2f7; padding-top: 20px;">
+        <a href="{% url 'profile' %}" style="color: #4a5568; text-decoration: none; font-weight: 600;">⬅️ Profilga qaytish</a>
+    </div>
+</div>
+{% endblock %}
